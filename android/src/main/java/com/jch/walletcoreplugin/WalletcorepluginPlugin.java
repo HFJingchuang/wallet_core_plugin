@@ -138,7 +138,7 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                 keyStoreMap.put(chainType.chainName(), bip39Wallet.getWalletFile().toString());
             }
             KeyStores keyStores = new KeyStores();
-            WalletFile walletFile = Wallet.createLight(ChainTypes.MNEMNOIC, arguments.password, new MneKeyPair(arguments.mnemonics));
+            WalletFile walletFile = Wallet.createLight(ChainTypes.MNEMNOIC, arguments.password, new MneKeyPair(mnemonics));
             keyStores.setMncFile(walletFile.toString());
             keyStores.setMnemonics(mnemonics);
             keyStores.setKeyStores(keyStoreMap);
