@@ -1,8 +1,6 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:walletcoreplugin/common/constant.dart';
 import 'package:walletcoreplugin/walletcoreplugin.dart';
@@ -17,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  bool isPass = true;
 
   @override
   void initState() {
@@ -30,8 +28,6 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await Walletcoreplugin.platformVersion;
-
       /// 创建钱包
       final walletEntity = await Walletcoreplugin.createIdentity(
           chainTypes: [ChainType.SWTC, ChainType.MOAC, ChainType.ETH],
@@ -39,21 +35,27 @@ class _MyAppState extends State<MyApp> {
       print('======== createIdentity ========');
       String mnemonics = walletEntity.mnemonics;
       print('mnemonics: ${mnemonics}');
-      final wallets = walletEntity.keystores;
+      final wallets = walletEntity.keyStores;
       wallets.forEach((key, value) {
         print('${key} : ${value}');
       });
 
       /// 导入助记词
       final wallet = await Walletcoreplugin.importMnemonic(
-          chainType: [ChainType.ETH, ChainType.MOAC, ChainType.SWTC],
+          chainTypes: [ChainType.ETH, ChainType.MOAC, ChainType.SWTC],
           mnemonics: mnemonics,
           password: 'pwd123456');
       print('======== importMnemonic ========');
-      final _wallets = wallet.keystores;
+      final _wallets = wallet.keyStores;
       _wallets.forEach((key, value) {
         print('${key} : ${value}');
       });
+
+      /// 导出助记词
+      final mne = await Walletcoreplugin.exportMnemonic(
+          mnemonics: wallet.mncFile, password: 'pwd123456');
+      print('======== importMnemonic ========');
+      assert(mnemonics == mne);
 
       /// 导入私钥
       /// 2062154cd708d9b1d61c526628912b69d98a014c
@@ -87,7 +89,7 @@ class _MyAppState extends State<MyApp> {
           chainType: ChainType.SWTC,
           privateKey: 'sEdVp8Mhgc8WvnswzDZ8Fv6RDcbNfCN',
           password: 'pwd123456',
-          isEd22519: true);
+          isEd25519: true);
 
       /// jM7uYXiKnBoRLaDGJxYu8EPKP5cW69kBbx
       print('swtcWallet: ${swtcWallet_ED}');
@@ -179,9 +181,18 @@ class _MyAppState extends State<MyApp> {
           value: 0.001,
           memo: 'SWT转账');
       assert(SIGNED_MSG_SWTC == signedSwtc);
+      setState(() {
+        isPass = true;
+      });
     } on PlatformException {
+      setState(() {
+        isPass = false;
+      });
       platformVersion = 'Failed to get platform version.';
     } catch (e, s) {
+      setState(() {
+        isPass = false;
+      });
       print(e);
       print(s);
     }
@@ -189,10 +200,6 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -203,7 +210,11 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: FlatButton(
+            child: Text('测试'),
+            color: isPass ? Colors.teal : Colors.red,
+            onPressed: () => initPlatformState(),
+          ),
         ),
       ),
     );

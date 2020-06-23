@@ -43,3 +43,18 @@ class NetWork {
   static const MC_MAINNET = 99;
   static const MC_TESTNET = 101;
 }
+
+/// 支持API
+class CallMethod {
+  static const createIdentity = "createIdentity";
+
+  static const exportPrivateKey = "exportPrivateKey";
+
+  static const importPrivateKey = "importPrivateKey";
+
+  static const importMnemonic = "importMnemonic";
+
+  static const exportMnemonic = "exportMnemonic";
+
+  static const signTransaction = "signTransaction";
+}

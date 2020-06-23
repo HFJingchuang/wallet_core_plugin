@@ -10,11 +10,6 @@ class Walletcoreplugin {
   static const MethodChannel _channel =
       const MethodChannel('com.jch/wallet_core_plugin');
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-
   /// 创建钱包
   ///
   /// [chainType] use [ChainType].
@@ -28,7 +23,8 @@ class Walletcoreplugin {
       int wordCount = WordCount.twelve,
       String addressIndex,
       bool isED25519 = false}) async {
-    final String identityJson = await _channel.invokeMethod('createIdentity', {
+    final identityJson =
+        await _channel.invokeMethod(CallMethod.createIdentity, {
       'chainTypes': chainTypes,
       'language': language.index,
       'wordCount': wordCount,
@@ -48,7 +44,8 @@ class Walletcoreplugin {
       String keystore,
       String password,
       bool isED25519 = false}) async {
-    final String privateKey = await _channel.invokeMethod('exportPrivateKey', {
+    final privateKey =
+        await _channel.invokeMethod(CallMethod.exportPrivateKey, {
       'chainType': chainType,
       'keyStore': keystore,
       'password': password,
@@ -65,12 +62,13 @@ class Walletcoreplugin {
       {int chainType,
       String privateKey,
       String password,
-      bool isEd22519 = false}) async {
-    final String walletJson = await _channel.invokeMethod('importPrivateKey', {
+      bool isEd25519 = false}) async {
+    final walletJson =
+        await _channel.invokeMethod(CallMethod.importPrivateKey, {
       'chainType': chainType,
       'privateKey': privateKey,
       'password': password,
-      'isED25519': isEd22519
+      'isED25519': isEd25519
     });
 
     return walletJson;
@@ -79,22 +77,38 @@ class Walletcoreplugin {
   /// 导入助记词
   ///
   /// [chainType] use [ChainType].
+  /// [mnemonics] 助记词字符串
   /// [isED25519] is only for [ChainType.SWTC].
   static Future<WalletEntity> importMnemonic(
-      {List<int> chainType,
+      {List<int> chainTypes,
       String mnemonics,
       String password,
       String addressIndex,
-      bool isEd22519 = false}) async {
-    final String walletJson = await _channel.invokeMethod('importMnemonic', {
-      'chainTypes': chainType,
+      bool isEd25519 = false}) async {
+    final walletJson = await _channel.invokeMethod(CallMethod.importMnemonic, {
+      'chainTypes': chainTypes,
       'mnemonics': mnemonics,
       'password': password,
       'addressIndex': addressIndex,
-      'isED25519': isEd22519
+      'isED25519': isEd25519
     });
 
     return WalletEntity.fromJson(jsonDecode(walletJson));
+  }
+
+  /// 导出助记词
+  ///
+  /// [mnemonics] 助记词KeyStore
+  static Future<String> exportMnemonic({
+    String mnemonics,
+    String password,
+  }) async {
+    final _mnemonics = await _channel.invokeMethod(CallMethod.exportMnemonic, {
+      'mnemonics': mnemonics,
+      'password': password,
+    });
+
+    return _mnemonics;
   }
 
   /// 转账交易本地签名
@@ -117,7 +131,7 @@ class Walletcoreplugin {
       int netWork = 0,
       double fee,
       String memo = ''}) async {
-    final String signedMsg = await _channel.invokeMethod('signTransaction', {
+    final signedMsg = await _channel.invokeMethod(CallMethod.signTransaction, {
       'chainType': chainType,
       'keyStore': keyStore,
       'password': password,

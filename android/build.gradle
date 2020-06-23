@@ -39,7 +39,7 @@ android {
 
 
 dependencies {
-    implementation 'com.github.HFJingchuang:wallet_core_android:0.0.5'
+    implementation 'com.github.HFJingchuang:wallet_core_android:0.0.7'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
     // https://mvnrepository.com/artifact/org.web3j/utils

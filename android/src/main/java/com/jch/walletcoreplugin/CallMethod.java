@@ -10,7 +10,8 @@ public interface CallMethod {
 
     String importMnemonic = "importMnemonic";
 
-    String signTransaction = "signTransaction";
+    String exportMnemonic = "exportMnemonic";
 
+    String signTransaction = "signTransaction";
 
 }

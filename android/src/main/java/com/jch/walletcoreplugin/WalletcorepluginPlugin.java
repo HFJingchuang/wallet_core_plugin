@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jch.core.cypto.ChainIdLong;
 import com.jch.core.cypto.ECKeyPair;
+import com.jch.core.cypto.MneKeyPair;
 import com.jch.core.cypto.MnemonicUtils;
 import com.jch.core.cypto.RandomSeed;
 import com.jch.core.eth.RawTransaction;
@@ -84,9 +85,6 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
             return;
         }
         switch (call.method) {
-            case "getPlatformVersion":
-                result.success("Android " + android.os.Build.VERSION.RELEASE);
-                break;
             case CallMethod.createIdentity:
                 createWallet(call, result);
                 break;
@@ -98,6 +96,9 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                 break;
             case CallMethod.importMnemonic:
                 onImportMnemonic(call, result);
+                break;
+            case CallMethod.exportMnemonic:
+                onExportMnemonic(call, result);
                 break;
             case CallMethod.signTransaction:
                 onSignTransaction(call, result);
@@ -137,8 +138,10 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                 keyStoreMap.put(chainType.chainName(), bip39Wallet.getWalletFile().toString());
             }
             KeyStores keyStores = new KeyStores();
+            WalletFile walletFile = Wallet.createLight(ChainTypes.MNEMNOIC, arguments.password, new MneKeyPair(arguments.mnemonics));
+            keyStores.setMncFile(walletFile.toString());
             keyStores.setMnemonics(mnemonics);
-            keyStores.setKeystores(keyStoreMap);
+            keyStores.setKeyStores(keyStoreMap);
             result.success(keyStores.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,9 +229,30 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                 keyStoreMap.put(chainType.chainName(), bip39Wallet.getWalletFile().toString());
             }
             KeyStores keyStores = new KeyStores();
-            keyStores.setMnemonics(arguments.mnemonics);
-            keyStores.setKeystores(keyStoreMap);
+            WalletFile walletFile = Wallet.createLight(ChainTypes.MNEMNOIC, arguments.password, new MneKeyPair(arguments.mnemonics));
+            keyStores.setMncFile(walletFile.toString());
+            keyStores.setKeyStores(keyStoreMap);
             result.success(keyStores.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.error(ErrorCode.MNEMONIC_ERROR, e.getMessage(), null);
+        }
+    }
+
+    /**
+     * 导出助记词
+     *
+     * @param call
+     * @param result
+     */
+    private void onExportMnemonic(MethodCall call, Result result) {
+        try {
+            if (isArgumentIllegal(call, result)) {
+                return;
+            }
+            Arguments arguments = getArgs(call);
+            MneKeyPair mneKeyPair = (MneKeyPair) Wallet.decrypt(ChainTypes.MNEMNOIC, arguments.password, false, WalletFile.parse(arguments.mnemonics));
+            result.success(mneKeyPair.getSecret());
         } catch (Exception e) {
             e.printStackTrace();
             result.error(ErrorCode.MNEMONIC_ERROR, e.getMessage(), null);

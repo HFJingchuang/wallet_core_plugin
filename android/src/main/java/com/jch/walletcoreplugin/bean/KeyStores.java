@@ -15,17 +15,27 @@ public class KeyStores {
         this.mnemonics = mnemonics;
     }
 
-    public Map<String, String> getKeystores() {
-        return keystores;
+    public Map<String, String> getKeyStores() {
+        return keyStores;
     }
 
-    public void setKeystores(Map<String, String> keystores) {
-        this.keystores = keystores;
+    public void setKeyStores(Map<String, String> keyStores) {
+        this.keyStores = keyStores;
+    }
+
+    public String getMncFile() {
+        return mncFile;
+    }
+
+    public void setMncFile(String mncFile) {
+        this.mncFile = mncFile;
     }
 
     private String mnemonics;
 
-    private Map<String, String> keystores;
+    private String mncFile;
+
+    private Map<String, String> keyStores;
 
 
     @Override
