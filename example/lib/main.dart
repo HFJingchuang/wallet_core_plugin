@@ -126,10 +126,7 @@ class _MyAppState extends State<MyApp> {
       keystore =
           '{"address":"jM7uYXiKnBoRLaDGJxYu8EPKP5cW69kBbx","chainType":"SWTC","dateTime":"2020-06-22 23-07-12","id":"a2a4ed3a-1a38-4cdc-a956-40f70115792f","version":3,"crypto":{"cipher":"aes-128-ctr","cipherparams":{"iv":"02398503daa710c9ece433aa5599c880"},"ciphertext":"04f99cadd7d127132b7ef007c5764f0a9d8b1b8f59561b7b7a0d982cb3737a","kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"8ce504bf3ab5c4480fbae5cbd656b21316a2e92b782fe80715b695736fde69d4"},"mac":"3d0a9bd201b54cfa2c09ad9397b3aac04600f17eb90b8ffaf3650c9c1b3338f2"}}';
       final swtcKey_ed = await Walletcoreplugin.exportPrivateKey(
-          chainType: ChainType.SWTC,
-          keystore: keystore,
-          password: 'pwd123456',
-          isED25519: true);
+          chainType: ChainType.SWTC, keystore: keystore, password: 'pwd123456');
 
       assert('sEdVp8Mhgc8WvnswzDZ8Fv6RDcbNfCN' == swtcKey_ed);
 
@@ -181,6 +178,20 @@ class _MyAppState extends State<MyApp> {
           value: 0.001,
           memo: 'SWT转账');
       assert(SIGNED_MSG_SWTC == signedSwtc);
+
+      final SIGN_MSG_SWTC_ED =
+          "120000228000000024000000016140000000000003E86840000000000027107321ED63D94214000B711653B779DFBB86447087F744E8C1AAA18CD13C45D9508377C87440C510ADB7B9A171CDFDB8B7137747AB60F2604852DFEAC84FDC4939B6335F61BAC46766C649E6AF497BC6DDA12A2DFE03D1661EE27DD22053A6B81D8E2C6FE80C811450EF39AE875A4131BFDC34F941840435732172248314E7A1670FFC2B0BEB48B4F06D610EB29FC25E9589F9EA7D09535754E8BDACE8B4A6E1F1";
+      final keystore_swtc_ED =
+          '{"chainType":"SWTC","address":"j34AejkoUZcBqMiwd3hSvj8CAWoSvG5boC","dateTime":"2020-07-08 15-43-00","id":"e21274ca-b034-43a3-a5c8-fbb06a36b9d8","version":3,"crypto":{"cipher":"aes-128-ctr","ciphertext":"2d28f2f561126307415be3709f9d73590c4db96da1006e255ef963929750a2","cipherparams":{"iv":"94a792fd23f7f75277cf75d8b2097849"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"d0354a0af2ec058997df9bdc73146e87c3bd6f65e3ca4b215be26cf89a7483ab"},"mac":"1088fc319e898de9fc131a9b570f4de3796fcd97c7f56f95df6456bf839565ec"}}';
+      final signedSwtcED = await Walletcoreplugin.signTransaction(
+          chainType: ChainType.SWTC,
+          keyStore: keystore_swtc_ED,
+          password: "'pwd123456'",
+          nonce: BigInt.from(1),
+          toAddress: 'j4fkSm9kUHXtXhA3pj2dNnmSHtuqtT76Ka',
+          value: 0.001,
+          memo: 'SWT转账');
+      assert(SIGN_MSG_SWTC_ED == signedSwtcED);
       setState(() {
         isPass = true;
       });

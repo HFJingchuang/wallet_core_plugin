@@ -40,16 +40,12 @@ class Walletcoreplugin {
   /// [chainType] use [ChainType].
   /// [isED25519] is only for [ChainType.SWTC].
   static Future<String> exportPrivateKey(
-      {int chainType,
-      String keystore,
-      String password,
-      bool isED25519 = false}) async {
+      {int chainType, String keystore, String password}) async {
     final privateKey =
         await _channel.invokeMethod(CallMethod.exportPrivateKey, {
       'chainType': chainType,
       'keyStore': keystore,
       'password': password,
-      'isED25519': isED25519,
     });
     return privateKey;
   }
@@ -115,12 +111,10 @@ class Walletcoreplugin {
   ///
   /// [chainType] use [ChainType].
   /// [netWork] use [NetWork].
-  /// [token] [issuer] [fee] [isED25519] is only for [ChainType.SWTC].
   static Future<String> signTransaction(
       {int chainType,
       String keyStore,
       String password,
-      bool isED25519 = false,
       BigInt nonce,
       String toAddress,
       String token = 'SWT',
@@ -135,7 +129,6 @@ class Walletcoreplugin {
       'chainType': chainType,
       'keyStore': keyStore,
       'password': password,
-      'isED25519': isED25519,
       'gasPrice': gasPrice.toString(),
       'gasLimit': gasLimit.toString(),
       'netWork': netWork,

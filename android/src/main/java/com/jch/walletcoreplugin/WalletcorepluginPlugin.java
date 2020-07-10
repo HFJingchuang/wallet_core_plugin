@@ -193,10 +193,10 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     privateKye = Numeric.toHexStringNoPrefix(keyPair.getPrivateKey());
                     break;
                 case SWTC:
-                    if (arguments.isED25519) {
+                    try {
                         EDKeyPair edKeyPair = (EDKeyPair) Wallet.decrypt(chainType, arguments.password, true, walletFile);
                         privateKye = edKeyPair.getSecret();
-                    } else {
+                    } catch (ClassCastException e) {
                         K256KeyPair k256KeyPair = (K256KeyPair) Wallet.decrypt(chainType, arguments.password, false, walletFile);
                         privateKye = k256KeyPair.getSecret();
                     }
@@ -320,15 +320,15 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     List<String> memos = new ArrayList<String>();// 交易备注
                     memos.add(arguments.memo);
                     payment.addMemo(memos);
-                    if (arguments.isED25519) {
+                    try {
                         EDKeyPair edKeyPair = (EDKeyPair) Wallet.decrypt(chainType, arguments.password, true, walletFile);
                         payment.as(AccountID.Account, edKeyPair.getAddress());
-                        SignedTransaction signedTx = payment.sign(edKeyPair.getSecret(), true);// 签名
+                        SignedTransaction signedTx = payment.sign(edKeyPair);// 签名
                         signedMsg = signedTx.tx_blob;
-                    } else {
+                    } catch (ClassCastException e) {
                         K256KeyPair k256KeyPair = (K256KeyPair) Wallet.decrypt(chainType, arguments.password, false, walletFile);
                         payment.as(AccountID.Account, k256KeyPair.getAddress());
-                        SignedTransaction signedTx = payment.sign(k256KeyPair.getSecret(), false);// 签名
+                        SignedTransaction signedTx = payment.sign(k256KeyPair);// 签名
                         signedMsg = signedTx.tx_blob;
                     }
                     break;
