@@ -57,4 +57,8 @@ class CallMethod {
   static const exportMnemonic = "exportMnemonic";
 
   static const signTransaction = "signTransaction";
+
+  static const isValidAddress = "isValidAddress";
+
+  static const isValidPrivateKey = "isValidPrivateKey";
 }

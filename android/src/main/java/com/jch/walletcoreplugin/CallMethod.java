@@ -14,4 +14,7 @@ public interface CallMethod {
 
     String signTransaction = "signTransaction";
 
+    String isValidAddress = "isValidAddress";
+
+    String isValidPrivateKey = "isValidPrivateKey";
 }

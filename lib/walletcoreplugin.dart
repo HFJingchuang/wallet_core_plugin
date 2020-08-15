@@ -8,7 +8,7 @@ import 'common/constant.dart';
 
 class Walletcoreplugin {
   static const MethodChannel _channel =
-      const MethodChannel('com.jch/wallet_core_plugin');
+  const MethodChannel('com.jch/wallet_core_plugin');
 
   /// 创建钱包
   ///
@@ -16,15 +16,14 @@ class Walletcoreplugin {
   /// [language] use [WordList].
   /// [wordCount] use [WordCount].
   /// [isED25519] is only for [ChainType.SWTC].
-  static Future<WalletEntity> createIdentity(
-      {List<int> chainTypes,
-      String password,
-      WordList language = WordList.chinese_simplified,
-      int wordCount = WordCount.twelve,
-      String addressIndex,
-      bool isED25519 = false}) async {
+  static Future<WalletEntity> createIdentity({List<int> chainTypes,
+    String password,
+    WordList language = WordList.chinese_simplified,
+    int wordCount = WordCount.twelve,
+    String addressIndex,
+    bool isED25519 = false}) async {
     final identityJson =
-        await _channel.invokeMethod(CallMethod.createIdentity, {
+    await _channel.invokeMethod(CallMethod.createIdentity, {
       'chainTypes': chainTypes,
       'language': language.index,
       'wordCount': wordCount,
@@ -42,7 +41,7 @@ class Walletcoreplugin {
   static Future<String> exportPrivateKey(
       {int chainType, String keystore, String password}) async {
     final privateKey =
-        await _channel.invokeMethod(CallMethod.exportPrivateKey, {
+    await _channel.invokeMethod(CallMethod.exportPrivateKey, {
       'chainType': chainType,
       'keyStore': keystore,
       'password': password,
@@ -54,13 +53,12 @@ class Walletcoreplugin {
   ///
   /// [chainType] use [ChainType].
   /// [isED25519] is only for [ChainType.SWTC].
-  static Future<String> importPrivateKey(
-      {int chainType,
-      String privateKey,
-      String password,
-      bool isEd25519 = false}) async {
+  static Future<String> importPrivateKey({int chainType,
+    String privateKey,
+    String password,
+    bool isEd25519 = false}) async {
     final walletJson =
-        await _channel.invokeMethod(CallMethod.importPrivateKey, {
+    await _channel.invokeMethod(CallMethod.importPrivateKey, {
       'chainType': chainType,
       'privateKey': privateKey,
       'password': password,
@@ -75,12 +73,11 @@ class Walletcoreplugin {
   /// [chainType] use [ChainType].
   /// [mnemonics] 助记词字符串
   /// [isED25519] is only for [ChainType.SWTC].
-  static Future<WalletEntity> importMnemonic(
-      {List<int> chainTypes,
-      String mnemonics,
-      String password,
-      String addressIndex,
-      bool isEd25519 = false}) async {
+  static Future<WalletEntity> importMnemonic({List<int> chainTypes,
+    String mnemonics,
+    String password,
+    String addressIndex,
+    bool isEd25519 = false}) async {
     final walletJson = await _channel.invokeMethod(CallMethod.importMnemonic, {
       'chainTypes': chainTypes,
       'mnemonics': mnemonics,
@@ -107,25 +104,50 @@ class Walletcoreplugin {
     return _mnemonics;
   }
 
+  /// 验证钱包地址
+  ///
+  /// [chainType] use [ChainType].
+  /// [address]
+  static Future<bool> isValidAddress({int chainType, String address}) async {
+    return await _channel.invokeMethod(CallMethod.isValidAddress,
+        {'chainType': chainType, 'address': address});
+  }
+
+  /// 验证钱包私钥
+  ///
+  /// [chainType] use [ChainType].
+  /// [privateKey]
+  /// [isED25519] is only for [ChainType.SWTC].
+  static Future<bool> isValidPrivateKey({
+    int chainType,
+    String privateKey,
+    bool isED25519,
+  }) async {
+    return await _channel.invokeMethod(CallMethod.isValidPrivateKey, {
+      'chainType': chainType,
+      'privateKey': privateKey,
+      'isED25519': isED25519,
+    });
+  }
+
   /// 转账交易本地签名
   ///
   /// [chainType] use [ChainType].
   /// [netWork] use [NetWork].
-  static Future<String> signTransaction(
-      {int chainType,
-      String keyStore,
-      String password,
-      BigInt nonce,
-      String toAddress,
-      String token = 'SWT',
-      String issuer = '',
-      double value,
-      double gasPrice,
-      double gasLimit,
-      int netWork = 0,
-      double fee,
-      String memo = '',
-      String data = ''}) async {
+  static Future<String> signTransaction({int chainType,
+    String keyStore,
+    String password,
+    BigInt nonce,
+    String toAddress,
+    String token = 'SWT',
+    String issuer = '',
+    double value,
+    double gasPrice,
+    double gasLimit,
+    int netWork = 0,
+    double fee,
+    String memo = '',
+    String data = ''}) async {
     final signedMsg = await _channel.invokeMethod(CallMethod.signTransaction, {
       'chainType': chainType,
       'keyStore': keyStore,

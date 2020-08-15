@@ -13,6 +13,7 @@ import com.jch.core.eth.RawTransaction;
 import com.jch.core.eth.TransactionEncoder;
 import com.jch.core.swtc.Config;
 import com.jch.core.swtc.EDKeyPair;
+import com.jch.core.swtc.JWallet;
 import com.jch.core.swtc.K256KeyPair;
 import com.jch.core.swtc.bean.AmountInfo;
 import com.jch.core.swtc.core.coretypes.AccountID;
@@ -102,6 +103,12 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                 break;
             case CallMethod.signTransaction:
                 onSignTransaction(call, result);
+                break;
+            case CallMethod.isValidAddress:
+                isValidAddress(call, result);
+                break;
+            case CallMethod.isValidPrivateKey:
+                isValidPrivateKey(call, result);
                 break;
             default:
                 result.notImplemented();
@@ -260,6 +267,66 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
     }
 
     /**
+     * 验证钱包地址
+     *
+     * @param call
+     * @param result
+     */
+    private void isValidAddress(MethodCall call, Result result) {
+        try {
+            if (isArgumentIllegal(call, result)) {
+                return;
+            }
+            Arguments arguments = getArgs(call);
+            ChainTypes chainType = ChainTypes.parseCoinType(arguments.chainType);
+            boolean isValidAddress = false;
+            switch (chainType) {
+                case MOAC:
+                case ETH:
+                    isValidAddress = WalletUtils.isValidAddress(arguments.address);
+                    break;
+                case SWTC:
+                    isValidAddress = JWallet.isValidAddress(arguments.address);
+                    break;
+            }
+            result.success(isValidAddress);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.error(ErrorCode.ERROR, e.getMessage(), null);
+        }
+    }
+
+    /**
+     * 验证钱包私钥
+     *
+     * @param call
+     * @param result
+     */
+    private void isValidPrivateKey(MethodCall call, Result result) {
+        try {
+            if (isArgumentIllegal(call, result)) {
+                return;
+            }
+            Arguments arguments = getArgs(call);
+            ChainTypes chainType = ChainTypes.parseCoinType(arguments.chainType);
+            boolean isValidPrivateKey = false;
+            switch (chainType) {
+                case MOAC:
+                case ETH:
+                    isValidPrivateKey = WalletUtils.isValidPrivateKey(arguments.privateKey);
+                    break;
+                case SWTC:
+                    isValidPrivateKey = JWallet.isValidSecret(arguments.privateKey, arguments.isED25519);
+                    break;
+            }
+            result.success(isValidPrivateKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.error(ErrorCode.ERROR, e.getMessage(), null);
+        }
+    }
+
+    /**
      * 转账交易本地签名
      *
      * @param call
@@ -294,7 +361,7 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     }
                     String data = arguments.data;
                     memo = Numeric.toHexString(arguments.memo.getBytes(UTF_8));
-                    if (memo.indexOf("0x") != -1 && data!=""){
+                    if (memo.indexOf("0x") != -1 && data != "") {
                         memo = data + memo.substring(2);
                     }
                     BigInteger _gasPrice = Convert.toWei(new BigDecimal(arguments.gasPrice), Convert.Unit.ETHER).toBigInteger();

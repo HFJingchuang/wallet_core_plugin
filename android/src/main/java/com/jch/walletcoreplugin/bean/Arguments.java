@@ -10,6 +10,7 @@ public class Arguments {
     public int language;
     public int wordCount;
     public long netWork;
+    public String address;
     public String password;
     public String privateKey;
     public String keyStore;
