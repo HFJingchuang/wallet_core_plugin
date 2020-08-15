@@ -281,7 +281,7 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     }
                     String memo = Numeric.toHexString(arguments.memo.getBytes(UTF_8));
                     BigInteger gasPrice = Convert.toWei(new BigDecimal(arguments.gasPrice), Convert.Unit.ETHER).toBigInteger();
-                    BigInteger gasLimit = Convert.toWei(new BigDecimal(arguments.gasLimit), Convert.Unit.ETHER).toBigInteger();
+                    BigInteger gasLimit = new BigDecimal(arguments.gasLimit).toBigInteger();
                     BigInteger value = Convert.toWei(new BigDecimal(arguments.value), Convert.Unit.ETHER).toBigInteger();
                     ECKeyPair keyPair = (ECKeyPair) Wallet.decrypt(chainType, arguments.password, false, walletFile);
                     RawTransaction rawTransaction = RawTransaction.createTransaction(arguments.nonce, gasPrice, gasLimit, arguments.to, value, memo);
@@ -292,9 +292,13 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     if (arguments.netWork == 0) {
                         arguments.netWork = ChainIdLong.MC_MAINNET;
                     }
+                    String data = arguments.data;
                     memo = Numeric.toHexString(arguments.memo.getBytes(UTF_8));
+                    if (memo.indexOf("0x") != -1 && data!=""){
+                        memo = data + memo.substring(2);
+                    }
                     BigInteger _gasPrice = Convert.toWei(new BigDecimal(arguments.gasPrice), Convert.Unit.ETHER).toBigInteger();
-                    BigInteger _gasLimit = Convert.toWei(new BigDecimal(arguments.gasLimit), Convert.Unit.ETHER).toBigInteger();
+                    BigInteger _gasLimit = new BigDecimal(arguments.gasLimit).toBigInteger();
                     BigInteger _value = Convert.toWei(new BigDecimal(arguments.value), Convert.Unit.ETHER).toBigInteger();
                     ECKeyPair _keyPair = (ECKeyPair) Wallet.decrypt(chainType, arguments.password, false, walletFile);
                     com.jch.core.moac.RawTransaction _rawTransaction = com.jch.core.moac.RawTransaction.createTransaction(arguments.nonce, _gasPrice, _gasLimit, arguments.to, _value, memo);

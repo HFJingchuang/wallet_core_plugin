@@ -23,6 +23,7 @@ public class Arguments {
     public String token;
     public String issuer;
     public String value;
+    public String data;
     public String memo;
     public BigInteger nonce;
 }

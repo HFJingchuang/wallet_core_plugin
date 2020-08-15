@@ -124,7 +124,8 @@ class Walletcoreplugin {
       double gasLimit,
       int netWork = 0,
       double fee,
-      String memo = ''}) async {
+      String memo = '',
+      String data = ''}) async {
     final signedMsg = await _channel.invokeMethod(CallMethod.signTransaction, {
       'chainType': chainType,
       'keyStore': keyStore,
@@ -137,6 +138,7 @@ class Walletcoreplugin {
       'token': token,
       'issuer': issuer,
       'value': value.toString(),
+      'data': data,
       'memo': memo
     });
     return signedMsg;
