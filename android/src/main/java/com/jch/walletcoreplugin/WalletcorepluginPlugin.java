@@ -347,6 +347,13 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                         arguments.netWork = ChainIdLong.ETHEREUM_CLASSIC_MAINNET;
                     }
                     String memo = Numeric.toHexString(arguments.memo.getBytes(UTF_8));
+                    String data = arguments.data;
+                    if (data != "") {
+                        if (memo.startsWith("0x")) {
+                            memo = memo.substring(2);
+                        }
+                        memo = data + memo;
+                    }
                     BigInteger gasPrice = Convert.toWei(new BigDecimal(arguments.gasPrice), Convert.Unit.ETHER).toBigInteger();
                     BigInteger gasLimit = new BigDecimal(arguments.gasLimit).toBigInteger();
                     BigInteger value = Convert.toWei(new BigDecimal(arguments.value), Convert.Unit.ETHER).toBigInteger();
@@ -359,10 +366,13 @@ public class WalletcorepluginPlugin implements FlutterPlugin, MethodCallHandler 
                     if (arguments.netWork == 0) {
                         arguments.netWork = ChainIdLong.MC_MAINNET;
                     }
-                    String data = arguments.data;
+                    data = arguments.data;
                     memo = Numeric.toHexString(arguments.memo.getBytes(UTF_8));
-                    if (memo.indexOf("0x") != -1 && data != "") {
-                        memo = data + memo.substring(2);
+                    if (data != "") {
+                        if (memo.startsWith("0x")) {
+                            memo = memo.substring(2);
+                        }
+                        memo = data + memo;
                     }
                     BigInteger _gasPrice = Convert.toWei(new BigDecimal(arguments.gasPrice), Convert.Unit.ETHER).toBigInteger();
                     BigInteger _gasLimit = new BigDecimal(arguments.gasLimit).toBigInteger();
